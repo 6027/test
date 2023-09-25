@@ -1,0 +1,156 @@
+#include<iostream>
+#include<string>
+#include<vector>
+using namespace std;
+
+
+
+
+
+class Observer
+{
+public:
+	
+	virtual void action(int)=0;
+};
+
+class Subject
+{
+public:
+	
+	virtual void attach(Observer*)=0;
+};
+
+
+
+class Observer_GPS :public Observer
+{
+
+public:
+	void attach(Subject*p)
+	{
+		p->attach(this);
+	}
+	void action(int i)
+	{
+		if (i == 0)
+		{
+			cout << "ZDA" << endl;
+		}
+		else if (i == 1)
+		{
+			cout << "INIT" << endl;
+		}
+	}
+};
+
+
+class Subject_GPS_ZDA :public Subject
+{
+public:
+	//标识符，用于区分不同action（）
+	int samble = 0;
+	//本身执行的函数
+	void Function()
+	{
+
+	}
+	//记录订阅者的列表
+	vector<Observer*>ob;
+	void attach(Observer*w)
+	{
+		ob.push_back(w);
+	}
+	//向订阅者发布更新，调用其action（）
+	void update()
+	{
+		int num = 0;
+		for (vector<Observer*>::iterator it = ob.begin(); it != ob.end(); it++)
+		{
+			num += 1;
+		}
+		for (int i = 0; i < num; i++)
+		{
+			Observer* p;
+			p=ob[i];
+			p->action(samble);
+		}
+		//for (vector<Observer*>::iterator it = ob.begin(); it != ob.end(); it++)
+		//{
+		//	/*Observer* p;
+		//	p=ob[0];
+		//	p->action();*/
+		//	/*cout << num << endl;*/
+		//}
+	}
+};
+
+class Subject_GPS_INIT :public Subject
+{
+public:
+	//标识符，用于区分不同action（）
+	int samble = 1;
+	//本身执行的函数
+	void Function()
+	{
+
+	}
+	//记录订阅者的列表
+	vector<Observer*>ob;
+	void attach(Observer* w)
+	{
+		ob.push_back(w);
+	}
+	//向订阅者发布更新，调用其action（）
+	void update()
+	{
+		int num = 0;
+		for (vector<Observer*>::iterator it = ob.begin(); it != ob.end(); it++)
+		{
+			num += 1;
+		}
+		for (int i = 0; i < num; i++)
+		{
+			Observer* p;
+			p = ob[i];
+			p->action(samble);
+		}
+	}
+};
+
+void test01()
+{
+	//创建两个观察者对象//目的是检验vector容器是不是好用，能不能能否对每个订阅者update并调用其action()
+	Observer_GPS gps;
+	Observer_GPS gps2;
+	Subject_GPS_ZDA zda;
+	Subject* p = &zda;
+	gps.attach(p);
+	gps2.attach(p);
+	zda.update();
+
+}
+
+void test02()
+{
+	//观察者接收到来自不同观察对象的update是执行不同的动作
+	Observer_GPS gps;
+	Subject_GPS_ZDA zda;
+	Subject* p1 = &zda;
+	Subject_GPS_INIT init;
+	Subject* p2 = &init;
+	gps.attach(p1);
+	gps.attach(p2);
+	zda.update();
+	init.update();
+}
+
+int main()
+{
+	//test01();
+	//test02();
+
+
+	system("pause");
+	return 0;
+}
